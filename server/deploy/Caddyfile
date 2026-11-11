@@ -1,0 +1,24 @@
+your-domain.example {
+    encode zstd gzip
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+        Strict-Transport-Security "max-age=31536000"
+    }
+
+    @backend path /api/* /up
+    handle @backend {
+        root * /var/www/collision-justice/server/public
+        php_fastcgi unix//run/php/php8.3-fpm.sock
+        file_server
+    }
+
+    handle {
+        root * /var/www/collision-justice/client/dist
+        try_files {path} /index.html
+        file_server
+    }
+}
